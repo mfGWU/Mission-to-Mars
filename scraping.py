@@ -10,6 +10,9 @@ def scrape_all():
     browser = Browser("chrome", executable_path="chromedriver", headless=True)
 
     news_title, news_paragraph = mars_news(browser)
+    #img_url, title = hemisphere(browser)
+    hemisphere_image_urls= hemisphere(browser)
+
 
      # Run all scraping functions and store results in a dictionary
     data = {
@@ -17,7 +20,8 @@ def scrape_all():
         "news_paragraph": news_paragraph,
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
-        "last_modified": dt.datetime.now()
+        "last_modified": dt.datetime.now(),
+        "hemisphere_image_urls": hemisphere(browser)
     }
 
     # Stop webdriver and return data
@@ -130,6 +134,57 @@ def mars_facts():
 
 # Now that we've gathered everything on Robin's list, we can end the automated browsing session.
 #browser.quit()
+
+def hemisphere(browser):
+# function that will scrape the hemisphere data by using your code from the 
+#  Mission_to_Mars_Challenge.py
+    # 1. Use browser to visit the URL 
+    url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+    browser.visit(url)
+
+    # 2. Create a list to hold the images and titles.
+    hemisphere_image_urls = []
+
+
+    # 3. Write code to retrieve the image urls and titles for each hemisphere.
+
+    for x in range(0, 1):
+    
+        # Parse the HTML - use BeautifulSoup to parse the HTML.
+        # It means that BeautifulSoup has taken a look at the 
+        # different components and can now access them.
+        html = browser.html
+        html_soup = soup(html, 'html.parser')
+        #Scrape the Title - find the title and extract it from H3 .
+        hemisphere_titles = html_soup.find_all('h3')
+        #keys2 = ['title']
+    
+        for title in hemisphere_titles:
+            title = title.text
+            #print(word)
+        
+            browser.click_link_by_partial_text(title)
+        
+            #link_titles.append(word)
+        
+            html = browser.html
+            img_urls = soup(html, 'html.parser')
+        
+            mars_url = img_urls.find_all("a", string="Sample")
+
+            for link in mars_url:
+                if link.has_attr('href'):
+                    img_url = link.attrs['href']
+                    #print(link.attrs['href'])
+
+                
+            #Build the list to hold the images and titles.
+            if img_url not in hemisphere_image_urls:
+                hemisphere_image_urls.append({'img_url':img_url, 'title':title})
+            
+            browser.back()
+
+    return hemisphere_image_urls
 
 if __name__ == "__main__":
 

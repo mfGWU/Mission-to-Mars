@@ -3,7 +3,7 @@
 # Second line says we'll use PyMongo to interact with our Mongo database.
 # Last line says that to use the scraping code, we will convert from Jupyter notebook to Python.
 
-from flask import Flask, render_template
+from flask import Flask, redirect, render_template
 from flask_pymongo import PyMongo
 import scraping
 
@@ -40,8 +40,8 @@ def scrape():
    mars = mongo.db.mars
    mars_data = scraping.scrape_all()
    mars.update({}, mars_data, upsert=True)
-   return "Scraping Successful!"
 
+   return redirect("/")
 
 # Need for Flask is to tell it to run
 if __name__ == "__main__":
